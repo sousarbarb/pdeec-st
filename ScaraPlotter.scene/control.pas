@@ -8,6 +8,9 @@ const
   lx_1 = l_1;   lx_2 = l_2;   lx_3 = 0.02;  // dimensions
   ly_1 = 0.04;  ly_2 = 0.04;  ly_3 = 0.02;  //   (relative to frame oci_xci_yci)
   lz_1 = 0.04;  lz_2 = 0.04;  lz_3 = 0.05;
+  rho_1 = m_1/(lx_1*ly_1*lz_1);             // mass density
+  rho_2 = m_2/(lx_2*ly_2*lz_2);
+  rho_3 = m_3/(lx_3*ly_3*lz_3);
   // Motors
   n_1  = 1;     n_2  = 1;     n_3  = 1;     // gear reduction ratio
   km_1 = 0.56;  km_2 = 0.56;  km_3 = 0.56;  // torque constant
@@ -45,7 +48,101 @@ begin
   result := R;
 end;
 
-// TODO: compute matrix D - inertia matrix
+// - rotation matrix (z axis)
+function RotZ(theta: double): Matrix;
+var ct, st: double;
+    R: Matrix;
+begin
+  ct := cos(theta);
+  st := sin(theta);
+  R := Mzeros(3,3);
+
+  MSetV(R,0,0,ct); MSetV(R,0,1,-st);
+  MSetV(R,1,0,st); MSetV(R,1,1, ct);
+                                     MSetV(R,2,2,1);
+
+  result := R;
+end;
+
+// Inverse Dynamics
+// - inertia matrix (D)
+function DMat(_Q: Matrix): Matrix;
+var q1_, q2_, q3_: double;
+    cq1, cq2, cq1pq2, sq1, sq2, sq1pq2: double;
+    Jvc_1, Jvc_2, Jvc_3: Matrix;
+    Jwc_1, Jwc_2, Jwc_3: Matrix;
+    Rc_1, Rc_2, Rc_3: Matrix;
+    I_1, I_2, I_3: Matrix;
+begin
+  q1_ := MGetV(_Q, 0, 0);
+  q2_ := MGetV(_Q, 1, 0);
+  q3_ := MGetV(_Q, 2, 0);
+  cq1 := cos(q1_);
+  sq1 := sin(q1_);
+  cq2 := cos(q2_);
+  sq2 := sin(q2_);
+  cq1pq2 := cos(q1_+q2_);
+  sq1pq2 := sin(q1_+q2_);
+
+  // Matrices Jvc_i (linear speed jacobian relative to oci_xci_yci_zci)
+  Jvc_1 := Mzeros(3,3);
+  Msetv(Jvc_1,0,0,-lc_1*sq1);
+  Msetv(Jvc_1,1,0, lc_1*cq1);
+  
+  Jvc_2 := Mzeros(3,3);
+  Msetv(Jvc_2,0,0,-l_1*sq1-lc_2*sq1pq2); Msetv(Jvc_2,0,1,-lc_2*sq1pq2);
+  Msetv(Jvc_2,1,0, l_1*cq1+lc_2*cq1pq2); Msetv(Jvc_2,1,1, lc_2*cq1pq2);
+  
+  Jvc_3 := Mzeros(3,3);
+  Msetv(Jvc_3,0,0,-l_1*sq1-l_2*sq1pq2); Msetv(Jvc_3,0,1,-l_2*sq1pq2);
+  Msetv(Jvc_3,1,0, l_1*cq1+l_2*cq1pq2); Msetv(Jvc_3,1,1, l_2*cq1pq2);
+                                                                      Msetv(Jvc_3,2,2,-1);
+
+  // Matrices Jwc_i (angular speed jacobian relative to oci_xci_yci_zci)
+  Jwc_1 := Mzeros(3,3);
+  Msetv(Jwc_1,2,0,1);
+
+  Jwc_2 := Mzeros(3,3);
+  Msetv(Jwc_2,2,0,1); Msetv(Jwc_2,2,1,1);
+
+  Jwc_3 := Jwc_2;
+
+  // Matrices Rc_i (orientation matrices relative to oci_xci_yci_zci)
+  Rc_1 := RotZ(q1_);
+  
+  Rc_2 := Mzeros(3,3);
+  MSetV(Rc_2,0,0,cq1pq2); MSetV(Rc_2,0,1, sq1pq2);
+  MSetV(Rc_2,1,0,sq1pq2); MSetV(Rc_2,1,1,-cq1pq2);
+                                                   MSetV(Rc_2,2,2,-1);
+  
+  Rc_3 := Rc_2;
+
+  // Matrices I_i (inertia tensors relative to oci_xci_yci_zci)
+  I_1 := Mzeros(3,3);
+  MSetV(I_1,0,0,rho_1*lx_1*ly_1*lz_1*(ly_1*ly_1+lz_1*lz_1)/12);
+  MSetV(I_1,1,1,rho_1*lx_1*ly_1*lz_1*(lx_1*lx_1+lz_1*lz_1)/12);
+  MSetV(I_1,2,2,rho_1*lx_1*ly_1*lz_1*(ly_1*ly_1+lx_1*lx_1)/12);
+
+  I_2 := Mzeros(3,3);
+  MSetV(I_2,0,0,rho_2*lx_2*ly_2*lz_2*(ly_2*ly_2+lz_2*lz_2)/12);
+  MSetV(I_2,1,1,rho_2*lx_2*ly_2*lz_2*(lx_2*lx_2+lz_2*lz_2)/12);
+  MSetV(I_2,2,2,rho_2*lx_2*ly_2*lz_2*(ly_2*ly_2+lx_2*lx_2)/12);
+
+  I_3 := Mzeros(3,3);
+  MSetV(I_3,0,0,rho_3*lx_3*ly_3*lz_3*(ly_3*ly_3+lz_3*lz_3)/12);
+  MSetV(I_3,1,1,rho_3*lx_3*ly_3*lz_3*(lx_3*lx_3+lz_3*lz_3)/12);
+  MSetV(I_3,2,2,rho_3*lx_3*ly_3*lz_3*(ly_3*ly_3+lx_3*lx_3)/12);
+
+  // Inertia Matrix D(Q) (Q = [q1 q2 q3]')
+  result := MAdd(
+    MMultReal( MMult( MTran(Jvc_1) , Jvc_1 ) , m_1 ) , MAdd( 
+    MMultReal( MMult( MTran(Jvc_2) , Jvc_2 ) , m_2 ) , MAdd(
+    MMultReal( MMult( MTran(Jvc_3) , Jvc_3 ) , m_3 ) , MAdd(
+    MMult(MMult(MMult(MTran(Jwc_1),Rc_1),I_1),MMult(MTran(Rc_1),Jwc_1)) , MAdd(
+    MMult(MMult(MMult(MTran(Jwc_2),Rc_2),I_2),MMult(MTran(Rc_2),Jwc_2)) , 
+    MMult(MMult(MMult(MTran(Jwc_3),Rc_3),I_3),MMult(MTran(Rc_3),Jwc_3)) )))));
+end;
+
 // TODO: compute diagonal matrix r^2 * Jm
 // TODO: compute matrix M
 // TODO: compute matrix C
