@@ -1,8 +1,18 @@
 // Constants
 const
- NumJoints = 3;
- a_1 = 0.6;
- a_2 = 0.4;
+  NumJoints = 3;
+  // Links
+  l_1  = 0.6;   l_2  = 0.4;                 // length
+  m_1  = 0.2;   m_2  = 0.2;   m_3  = 0.1;   // mass
+  lc_1 = l_1/2; lc_2 = l_2/2;               // length to center of mass
+  lx_1 = l_1;   lx_2 = l_2;   lx_3 = 0.02;  // dimensions
+  ly_1 = 0.04;  ly_2 = 0.04;  ly_3 = 0.02;  //   (relative to frame oci_xci_yci)
+  lz_1 = 0.04;  lz_2 = 0.04;  lz_3 = 0.05;
+  // Motors
+  n_1  = 1;     n_2  = 1;     n_3  = 1;     // gear reduction ratio
+  km_1 = 0.56;  km_2 = 0.56;  km_3 = 0.56;  // torque constant
+  jm_1 = 0;     jm_2 = 0;     jm_3 = 0;     // inertia
+  bm_1 = 0.10;  bm_2 = 0.10;  bm_3 = 0.10;  // viscous constant
 
 // Global Variables
 var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
@@ -35,6 +45,13 @@ begin
   result := R;
 end;
 
+// TODO: compute matrix D - inertia matrix
+// TODO: compute diagonal matrix r^2 * Jm
+// TODO: compute matrix M
+// TODO: compute matrix C
+// TODO: compute matrix B
+// TODO: compute matrix Phi
+
 
 
 // Forward Kinematics
@@ -48,8 +65,8 @@ begin
   theta2 := Mgetv(JointValues, 1, 0);
   disp3 := Mgetv(JointValues, 2, 0);
 
-  A1 := DHMat(a_1,0,0,theta1);
-  A2 := DHMat(a_2, rad(180), 0,theta2);
+  A1 := DHMat(l_1,0,0,theta1);
+  A2 := DHMat(l_2, rad(180), 0,theta2);
   A3 := DHMat(0,0,disp3,0);
 
   P := MMult(A1, A2);
@@ -68,10 +85,10 @@ begin
   yc := Mgetv(XYZ, 1, 0);
   zc := Mgetv(XYZ, 2, 0);
 
-  c2 := (Power(xc,2) + power(yc,2) - power(a_1,2) - power(a_2,2))/(2*a_1*a_2);
+  c2 := (Power(xc,2) + power(yc,2) - power(l_1,2) - power(l_2,2))/(2*l_1*l_2);
 
   theta2 := ATan2(-sqrt(1-c2),c2);
-  theta1 := ATan2(yc,xc) - ATan2(a_2*sin(theta2), a_1 + a_2*cos(theta2));
+  theta1 := ATan2(yc,xc) - ATan2(l_2*sin(theta2), l_1 + l_2*cos(theta2));
   disp3 := -zc;
 
   result := Mzeros(3, 1);
