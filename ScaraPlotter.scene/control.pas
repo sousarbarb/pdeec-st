@@ -64,6 +64,8 @@ begin
   result := R;
 end;
 
+
+
 // Inverse Dynamics (ID)
 // - inertia matrix (D)
 function IDDMat(_Q: Matrix): Matrix;
@@ -144,9 +146,46 @@ end;
 
 // TODO: compute diagonal matrix r^2 * Jm
 // TODO: compute matrix M
-// TODO: compute matrix C
 // TODO: compute matrix B
 // TODO: compute matrix Phi
+
+// - C matrix (C)
+function IDCMat(_Q,_Qd1: Matrix): Matrix;
+var q1_, q2_, q3_: double;
+    q1d1_, q2d1_, q3d1_: double;
+    cq1, cq2, cq1pq2, sq1, sq2, sq1pq2: double;
+    c211, c112, c121, c221: double;
+begin
+  q1_ := MGetV(_Q, 0, 0);
+  q2_ := MGetV(_Q, 1, 0);
+  q3_ := MGetV(_Q, 2, 0);
+  q1d1_ := MGetV(_Qd1, 0, 0);
+  q2d1_ := MGetV(_Qd1, 1, 0);
+  q3d1_ := MGetV(_Qd1, 2, 0);
+  cq1 := cos(q1_);
+  sq1 := sin(q1_);
+  cq2 := cos(q2_);
+  sq2 := sin(q2_);
+  cq1pq2 := cos(q1_+q2_);
+  sq1pq2 := sin(q1_+q2_);
+
+  // Christoffel symbols
+  c211 := m_3 * cq1pq2 * l_2  * ( l_1 * sq1 + l_2  * sq1pq2 ) -
+          m_2 * sq1pq2 * lc_2 * ( l_1 * cq1 + lc_2 * cq1pq2 ) -
+          m_3 * sq1pq2 * l_2  * ( l_1 * cq1 + l_2  * cq1pq2 ) +
+          m_2 * cq1pq2 * lc_2 * ( l_1 * sq1 + lc_2 * sq1pq2 );
+  c121 := c211;
+  c221 := c211;
+  c112 := m_3 * sq1pq2 * l_2  * ( l_1 * cq1 + l_2  * cq1pq2 ) +
+          m_2 * sq1pq2 * lc_2 * ( l_1 * cq1 + lc_2 * cq1pq2 ) -
+          m_3 * cq1pq2 * l_2  * ( l_1 * sq1 + l_2  * sq1pq2 ) -
+          m_2 * cq1pq2 * lc_2 * ( l_1 * sq1 + lc_2 * sq1pq2 );
+
+  // Matrix C
+  result := Mzeros(3,3);
+  MSetV(result,0,0,c211*q2d1_); MSetV(result,0,1,c121*q1d1_+c221*q2d1_);
+  MSetV(result,1,0,c112*q1d1_);
+end;
 
 
 
