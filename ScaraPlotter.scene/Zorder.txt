@@ -1,7 +1,7 @@
 FViewer
 FSheets
-FSceneEdit
 FEditor
+FSceneEdit
 FParams
 FChart
 

@@ -163,11 +163,11 @@ begin
   disp3 := Mgetv(JointValues, 2, 0);
 
   A1 := DHMat(l_1,0,0,theta1);
-  A2 := DHMat(l_2, rad(180), 0,theta2);
+  A2 := DHMat(l_2,rad(180),0,theta2);
   A3 := DHMat(0,0,disp3,0);
 
-  P := MMult(A1, A2);
-  P := MMult(P, A3);
+  P := MMult(A1,A2);
+  P := MMult(P,A3);
 
   result := P;
 end;
@@ -184,7 +184,7 @@ begin
 
   c2 := (Power(xc,2) + power(yc,2) - power(l_1,2) - power(l_2,2))/(2*l_1*l_2);
 
-  theta2 := ATan2(-sqrt(1-c2),c2);
+  theta2 := ATan2(-sqrt(1-power(c2,2)),c2);
   theta1 := ATan2(yc,xc) - ATan2(l_2*sin(theta2), l_1 + l_2*cos(theta2));
   disp3 := -zc;
 
@@ -252,7 +252,7 @@ begin
 
 
 
-   // Forward Kinematics
+  // Forward Kinematics
   if RCButtonPressed(1, 9) then begin
     ReqValuesDK := Mzeros(3, 1);
     Msetv(ReqValuesDK, 0, 0, rad(GetRCValue(2, 9)));

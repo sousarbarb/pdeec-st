@@ -32,9 +32,9 @@
     <cell r="3" c="7" text="1" />
     <cell r="4" c="7" text="2" />
     <cell r="1" c="8" text="Value" />
-    <cell r="2" c="8" text="0.00623" />
-    <cell r="3" c="8" text="-0.0193" />
-    <cell r="4" c="8" text="0.0425" />
+    <cell r="2" c="8" text="79.4" />
+    <cell r="3" c="8" text="-92.4" />
+    <cell r="4" c="8" text="0.0427" />
     <cell r="1" c="9" text="[DK]" />
     <cell r="2" c="9" text="50" />
     <cell r="3" c="9" text="-20" />
@@ -48,15 +48,15 @@
     <cell r="3" c="10" text="0.660" />
     <cell r="4" c="10" text="-0.120" />
     <cell r="1" c="14" text="[IK]" />
-    <cell r="2" c="14" text="1" />
-    <cell r="3" c="14" text="0" />
+    <cell r="2" c="14" text="0.5" />
+    <cell r="3" c="14" text="0.5" />
     <cell r="4" c="14" text="0" />
-    <cell r="2" c="13" text="1" />
-    <cell r="3" c="13" text="-0.0000436" />
-    <cell r="4" c="13" text="-0.0426" />
+    <cell r="2" c="13" text="0.5" />
+    <cell r="3" c="13" text="0.5" />
+    <cell r="4" c="13" text="-0.0442" />
     <cell r="1" c="15" text="Req_Joint" />
-    <cell r="2" c="15" text="0.000" />
-    <cell r="3" c="15" text="0.000" />
+    <cell r="2" c="15" text="79.416" />
+    <cell r="3" c="15" text="-92.388" />
     <cell r="4" c="15" text="0.000" />
     <cell r="14" c="1" text="Vertcal:" />
     <cell r="14" c="2" text="0" />
