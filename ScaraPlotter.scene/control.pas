@@ -144,8 +144,6 @@ begin
   result := MAdd( result , MMult(MMult(MMult(MTran(Jwc_3),Rc_3),I_3),MMult(MTran(Rc_3),Jwc_3)) );
 end;
 
-// TODO: compute diagonal matrix r^2 * Jm
-// TODO: compute matrix M
 // TODO: compute matrix B
 // TODO: compute matrix Phi
 
@@ -156,6 +154,12 @@ begin
   MSetV(result,0,0,n_1*n_1*jm_1);
   MSetV(result,1,1,n_2*n_2*jm_2);
   MSetV(result,2,2,n_3*n_3*jm_3);
+end;
+
+// - M matrix (D + J)
+function IDMMat(_Q: Matrix): Matrix;
+begin
+  result := IDDMat(_Q) + IDJmMat;
 end;
 
 // - C matrix (C)
