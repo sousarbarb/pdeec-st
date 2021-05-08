@@ -17,6 +17,8 @@ const
   jm_1 = 0;     jm_2 = 0;     jm_3 = 0;     // inertia
   bm_1 = 0.10;  bm_2 = 0.10;  bm_3 = 0.10;  // viscous constant
   ri_1 = 0.12;  ri_2 = 0.12;  ri_3 = 0.12;  // internal resistance
+  // Gravity
+  gacc = 9.80665;  // gravitational acceleration (m/s^2)
 
 // Global Variables
 var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
@@ -159,7 +161,7 @@ end;
 // - M matrix (D + J)
 function IDMMat(_Q: Matrix): Matrix;
 begin
-  result := IDDMat(_Q) + IDJmMat;
+  result := MAdd( IDDMat(_Q) , IDJmMat );
 end;
 
 // - C matrix (C)
@@ -207,6 +209,32 @@ begin
   MSetV(result,0,0,bm_1+km_1*km_1/ri_1);
   MSetV(result,1,1,bm_2+km_2*km_2/ri_2);
   MSetV(result,2,2,bm_3+km_3*km_3/ri_3);
+end;
+
+// - gravity influence (Phi matrix)
+function IDPhiMatHorizontalSCARA(_Q: Matrix): Matrix;
+begin
+  result := Mzeros(3,1);
+  MSetV(result,2,0,gacc*m_3);
+end;
+
+function IDPhiMatVerticalSCARA(_Q: Matrix): Matrix;
+var q1_, q2_, q3_: double;
+    cq1, cq2, cq1pq2, sq1, sq2, sq1pq2: double;
+begin
+  q1_ := MGetV(_Q, 0, 0);
+  q2_ := MGetV(_Q, 1, 0);
+  q3_ := MGetV(_Q, 2, 0);
+  cq1 := cos(q1_);
+  cq1pq2 := cos(q1_+q2_);
+
+  result := Mzeros(3,1);
+  MSetV(result,0,0,gacc*lc_1*cq1*m_1 +
+                   gacc*l_1 *cq1*m_2 + gacc*lc_2*cq1pq2*m_2+
+                   gacc*l_1 *cq1*m_3 + gacc*l_2 *cq1pq2*m_3);
+  MSetV(result,1,0,gacc*lc_2*cq1pq2*m_2 +
+                   gacc*l_2 *cq1pq2*m_3);
+  MSetV(result,2,0,0);
 end;
 
 
