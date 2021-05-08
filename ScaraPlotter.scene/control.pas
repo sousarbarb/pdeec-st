@@ -149,6 +149,15 @@ end;
 // TODO: compute matrix B
 // TODO: compute matrix Phi
 
+// - Diagonal matrix r^2 * Jm
+function IDJmMat: Matrix;
+begin
+  result := Mzeros(3,3);
+  MSetV(result,0,0,n_1*n_1*jm_1);
+  MSetV(result,1,1,n_2*n_2*jm_2);
+  MSetV(result,2,2,n_3*n_3*jm_3);
+end;
+
 // - C matrix (C)
 function IDCMat(_Q,_Qd1: Matrix): Matrix;
 var q1_, q2_, q3_: double;
