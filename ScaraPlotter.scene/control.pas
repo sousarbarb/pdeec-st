@@ -134,13 +134,12 @@ begin
   MSetV(I_3,2,2,rho_3*lx_3*ly_3*lz_3*(ly_3*ly_3+lx_3*lx_3)/12);
 
   // Inertia Matrix D(Q) (Q = [q1 q2 q3]')
-  result := MAdd(
-    MMultReal( MMult( MTran(Jvc_1) , Jvc_1 ) , m_1 ) , MAdd( 
-    MMultReal( MMult( MTran(Jvc_2) , Jvc_2 ) , m_2 ) , MAdd(
-    MMultReal( MMult( MTran(Jvc_3) , Jvc_3 ) , m_3 ) , MAdd(
-    MMult(MMult(MMult(MTran(Jwc_1),Rc_1),I_1),MMult(MTran(Rc_1),Jwc_1)) , MAdd(
-    MMult(MMult(MMult(MTran(Jwc_2),Rc_2),I_2),MMult(MTran(Rc_2),Jwc_2)) , 
-    MMult(MMult(MMult(MTran(Jwc_3),Rc_3),I_3),MMult(MTran(Rc_3),Jwc_3)) )))));
+  result := MMultReal( MMult(MTran(Jvc_1),Jvc_1) , m_1 );
+  result := MAdd( result , MMultReal( MMult(MTran(Jvc_2),Jvc_2) , m_2 ) );
+  result := MAdd( result , MMultReal( MMult(MTran(Jvc_3),Jvc_3) , m_3 ) );
+  result := MAdd( result , MMult(MMult(MMult(MTran(Jwc_1),Rc_1),I_1),MMult(MTran(Rc_1),Jwc_1)) );
+  result := MAdd( result , MMult(MMult(MMult(MTran(Jwc_2),Rc_2),I_2),MMult(MTran(Rc_2),Jwc_2)) );
+  result := MAdd( result , MMult(MMult(MMult(MTran(Jwc_3),Rc_3),I_3),MMult(MTran(Rc_3),Jwc_3)) );
 end;
 
 // TODO: compute diagonal matrix r^2 * Jm
