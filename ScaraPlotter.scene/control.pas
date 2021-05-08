@@ -32,7 +32,7 @@ begin
 end;
 
 // - compute Denavit-Hartenberg (DH) matrix
-function DHMat(a, alpha, d, theta: double): Matrix;
+function DHMat(theta, d, a, alpha: double): Matrix;
 var ct, st, ca, sa: double;
     R: Matrix;
 begin
@@ -64,9 +64,9 @@ begin
   result := R;
 end;
 
-// Inverse Dynamics
+// Inverse Dynamics (ID)
 // - inertia matrix (D)
-function DMat(_Q: Matrix): Matrix;
+function IDDMat(_Q: Matrix): Matrix;
 var q1_, q2_, q3_: double;
     cq1, cq2, cq1pq2, sq1, sq2, sq1pq2: double;
     Jvc_1, Jvc_2, Jvc_3: Matrix;
@@ -152,19 +152,18 @@ end;
 
 
 // Forward Kinematics
-function DK3(JointValues: matrix): matrix;
-var
-  A1, A2, A3: Matrix;
-  P: Matrix;
-  theta1, theta2, disp3: double;
+function DK3(_Q: matrix): matrix;
+var A1, A2, A3: Matrix;
+    P: Matrix;
+    q1_, q2_, q3_: double;
 begin
-  theta1 := Mgetv(JointValues, 0, 0);
-  theta2 := Mgetv(JointValues, 1, 0);
-  disp3 := Mgetv(JointValues, 2, 0);
+  q1_ := MGetV(_Q, 0, 0);
+  q2_ := MGetV(_Q, 1, 0);
+  q3_ := MGetV(_Q, 2, 0);
 
-  A1 := DHMat(l_1,0,0,theta1);
-  A2 := DHMat(l_2,rad(180),0,theta2);
-  A3 := DHMat(0,0,disp3,0);
+  A1 := DHMat(q1_,0  ,l_1,0       );
+  A2 := DHMat(q2_,0  ,l_2,rad(180));
+  A3 := DHMat(0  ,q3_,0  ,0       );
 
   P := MMult(A1,A2);
   P := MMult(P,A3);
@@ -176,7 +175,7 @@ end;
 function IK3(XYZ: matrix): matrix;
 var
   xc, yc, zc, c2: double;
-  theta1, theta2, disp3: double;
+  q1_, q2_, q3_: double;
 begin
   xc := Mgetv(XYZ, 0, 0);
   yc := Mgetv(XYZ, 1, 0);
@@ -184,14 +183,14 @@ begin
 
   c2 := (Power(xc,2) + power(yc,2) - power(l_1,2) - power(l_2,2))/(2*l_1*l_2);
 
-  theta2 := ATan2(-sqrt(1-power(c2,2)),c2);
-  theta1 := ATan2(yc,xc) - ATan2(l_2*sin(theta2), l_1 + l_2*cos(theta2));
-  disp3 := -zc;
+  q2_ := ATan2(-sqrt(1-power(c2,2)),c2);
+  q1_ := ATan2(yc,xc) - ATan2(l_2*sin(q2_), l_1 + l_2*cos(q2_));
+  q3_ := -zc;
 
   result := Mzeros(3, 1);
-  MSetV(result, 0, 0, theta1);
-  MSetV(result, 1, 0, theta2);
-  MSetV(result, 2, 0, disp3);
+  MSetV(result, 0, 0, q1_);
+  MSetV(result, 1, 0, q2_);
+  MSetV(result, 2, 0, q3_);
 end;
 
 
