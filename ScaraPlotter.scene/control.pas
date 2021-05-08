@@ -16,6 +16,7 @@ const
   km_1 = 0.56;  km_2 = 0.56;  km_3 = 0.56;  // torque constant
   jm_1 = 0;     jm_2 = 0;     jm_3 = 0;     // inertia
   bm_1 = 0.10;  bm_2 = 0.10;  bm_3 = 0.10;  // viscous constant
+  ri_1 = 0.12;  ri_2 = 0.12;  ri_3 = 0.12;  // internal resistance
 
 // Global Variables
 var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
@@ -144,7 +145,6 @@ begin
   result := MAdd( result , MMult(MMult(MMult(MTran(Jwc_3),Rc_3),I_3),MMult(MTran(Rc_3),Jwc_3)) );
 end;
 
-// TODO: compute matrix B
 // TODO: compute matrix Phi
 
 // - Diagonal matrix r^2 * Jm
@@ -198,6 +198,15 @@ begin
   result := Mzeros(3,3);
   MSetV(result,0,0,c211*q2d1_); MSetV(result,0,1,c121*q1d1_+c221*q2d1_);
   MSetV(result,1,0,c112*q1d1_);
+end;
+
+// - Diagonal matrix B
+function IDBMat: Matrix;
+begin
+  result := Mzeros(3,3);
+  MSetV(result,0,0,bm_1+km_1*km_1/ri_1);
+  MSetV(result,1,1,bm_2+km_2*km_2/ri_2);
+  MSetV(result,2,2,bm_3+km_3*km_3/ri_3);
 end;
 
 
