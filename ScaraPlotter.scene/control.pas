@@ -23,6 +23,7 @@ const
 // Global Variables
 var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
     Q_meas, Qd1_meas, W_mat, K0_mat, K1_mat: Matrix;
+    Q_desir, Qd1_desir, Qd2_desir: Matrix;
     InvDynON: boolean;
 
 
@@ -67,6 +68,20 @@ begin
                                      MSetV(R,2,2,1);
 
   result := R;
+end;
+
+// - torque mode (controllers deactivated)
+procedure SetTorqueMode;
+begin
+  SetMotorControllerState(0, iJ1Axis, false);
+  SetMotorControllerState(0, iJ2Axis, false);
+  SetMotorControllerState(0, iZAxis , false);
+end;
+procedure ResetTorqueMode;
+begin
+  SetMotorControllerState(0, iJ1Axis, true);
+  SetMotorControllerState(0, iJ2Axis, true);
+  SetMotorControllerState(0, iZAxis , true);
 end;
 
 
@@ -292,6 +307,7 @@ var
   U1, U2: double;
   PosPen: TPoint3D;
   M_mat, C_mat, B_mat, Phi_mat: Matrix;
+  Aq_mat, R_mat, U_mat: Matrix;
 
 begin
   // Initialization
@@ -415,20 +431,25 @@ begin
   if RCButtonPressed(10,7) then begin
     if InvDynON then begin
       InvDynON := false;
+      ResetTorqueMode;
     end else begin
       InvDynON := true;
+      SetTorqueMode;
       // wn
       W_mat := RangeToMatrix(28,8,3,1);
       // K0 = wn ^ 2
+      K0_mat := Mzeros(3,3);
       MSetV(K0_mat,0,0,MGetV(W_mat,0,0)*MGetV(W_mat,0,0));
-      MSetV(K0_mat,1,0,MGetV(W_mat,1,0)*MGetV(W_mat,1,0));
-      MSetV(K0_mat,2,0,MGetV(W_mat,2,0)*MGetV(W_mat,2,0));
+      MSetV(K0_mat,1,1,MGetV(W_mat,1,0)*MGetV(W_mat,1,0));
+      MSetV(K0_mat,2,2,MGetV(W_mat,2,0)*MGetV(W_mat,2,0));
       // K1 = 2 * wn
-      K1_mat := MMultReal(W_mat,2);
+      K1_mat := Mzeros(3,3);
+      MSetV(K1_mat,0,0,2*MGetV(W_mat,0,0));
+      MSetV(K1_mat,1,1,2*MGetV(W_mat,1,0));
+      MSetV(K1_mat,2,2,2*MGetV(W_mat,2,0));
     end;
   end;
   if InvDynON then begin
-    // Initialization
     M_mat := IDMMat(Q_meas);
     C_mat := IDCMat(Q_meas,Qd1_meas);
     B_mat := IDBMat;
@@ -438,14 +459,31 @@ begin
       Phi_mat := IDPhiMatVerticalSCARA(Q_meas);
     end;
 
+    // Reference signal
+    R_mat := Qd2_desir;
+    R_mat := MAdd(R_mat,MMult(K1_mat,Qd1_desir));
+    R_mat := MAdd(R_mat,MMult(K0_mat,Q_desir));
+
+    // Outer loop
+    Aq_mat := R_mat;
+    Aq_mat := MSub(Aq_mat,MMult(K0_mat,Q_meas));
+    Aq_mat := MSub(Aq_mat,MMult(K1_mat,Qd1_meas));
+
+    // Inner loop
+    U_mat := MMult(M_mat,Aq_mat);
+    U_mat := MAdd(U_mat,MMult(C_mat,Qd1_meas));
+    U_mat := MAdd(U_mat,MMult(B_mat,Qd1_meas));
+    U_mat := MAdd(U_mat,Phi_mat);
+
     MatrixToRangeF(12, 8, Q_meas, '%.3f');
     MatrixToRangeF(12, 9, Qd1_meas, '%.3f');
     MatrixToRangeF(15, 8, M_mat, '%.3f');
     MatrixToRangeF(18, 8, C_mat, '%.3f');
     MatrixToRangeF(21, 8, B_mat, '%.3f');
     MatrixToRangeF(24, 8, Phi_mat, '%.3f');
-    MatrixToRangeF(28, 9, K0_mat, '%.3f');
-    MatrixToRangeF(28,10, K1_mat, '%.3f');
+    MatrixToRangeF(28, 9, R_mat, '%.3f');
+    MatrixToRangeF(28,10, Aq_mat, '%.3f');
+    MatrixToRangeF(28,11, U_mat, '%.3f');
   end;
 
 
@@ -473,7 +511,10 @@ begin
 
   Q_meas := Mzeros(3,1);
   Qd1_meas := Mzeros(3,1);
+  Q_desir := Mzeros(3,1);
+  Qd1_desir := Mzeros(3,1);
+  Qd2_desir := Mzeros(3,1);
   W_mat := Mzeros(3,1);
-  K0_mat := Mzeros(3,1);
-  K1_mat := Mzeros(3,1);
+  K0_mat := Mzeros(3,3);
+  K1_mat := Mzeros(3,3);
 end;
