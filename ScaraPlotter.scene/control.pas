@@ -291,6 +291,7 @@ var
   HTrans, XYZ, ORIENTATION, AuxJoints, ReqJoints, ReqValuesDK: matrix;
   U1, U2: double;
   PosPen: TPoint3D;
+  M_mat, C_mat, B_mat, Phi_mat: Matrix;
 
 begin
   // Initialization
@@ -417,6 +418,24 @@ begin
     end else begin
       InvDynON := true;
     end;
+  end;
+  if InvDynON then begin
+    // Initialization
+    M_mat := IDMMat(Q_meas);
+    C_mat := IDCMat(Q_meas,Qd1_meas);
+    B_mat := IDBMat;
+    if GetRCValue(14, 2) = 0 then begin
+      Phi_mat := IDPhiMatHorizontalSCARA(Q_meas);
+    end else begin
+      Phi_mat := IDPhiMatVerticalSCARA(Q_meas);
+    end;
+
+    MatrixToRangeF(12, 8, Q_meas, '%.3f');
+    MatrixToRangeF(12, 9, Qd1_meas, '%.3f');
+    MatrixToRangeF(15, 8, M_mat, '%.3f');
+    MatrixToRangeF(18, 8, C_mat, '%.3f');
+    MatrixToRangeF(21, 8, B_mat, '%.3f');
+    MatrixToRangeF(24, 8, Phi_mat, '%.3f');
   end;
 
 
