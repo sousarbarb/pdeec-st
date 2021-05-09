@@ -22,6 +22,8 @@ const
 
 // Global Variables
 var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
+    Q_meas, Qd1_meas: Matrix;
+    InvDynON: boolean;
 
 
 
@@ -146,8 +148,6 @@ begin
   result := MAdd( result , MMult(MMult(MMult(MTran(Jwc_2),Rc_2),I_2),MMult(MTran(Rc_2),Jwc_2)) );
   result := MAdd( result , MMult(MMult(MMult(MTran(Jwc_3),Rc_3),I_3),MMult(MTran(Rc_3),Jwc_3)) );
 end;
-
-// TODO: compute matrix Phi
 
 // - Diagonal matrix r^2 * Jm
 function IDJmMat: Matrix;
@@ -293,6 +293,31 @@ var
   PosPen: TPoint3D;
 
 begin
+  // Initialization
+  // - joint position
+  MSetV(Q_meas,0,0, GetAxisPos(0, iJ1Axis) );
+  MSetV(Q_meas,1,0, GetAxisPos(0, iJ2Axis) );
+  MSetV(Q_meas,2,0, GetAxisPos(0, iZAxis ) );
+  // - joint speed
+  MSetV(Qd1_meas,0,0, GetAxisSpeed(0, iJ1Axis) );
+  MSetV(Qd1_meas,1,0, GetAxisSpeed(0, iJ2Axis) );
+  MSetV(Qd1_meas,2,0, GetAxisSpeed(0, iZAxis ) );
+  // - pen position
+  PosPen := GetSolidPos(0, iPen);
+  // - canvas
+  t := GetSolidCanvas(0,0);
+  t.brush.color := clwhite;
+  t.textout(10,10, GetRCText(9, 2));
+
+  // Horizontal/Vertical SCARA
+  if GetRCValue(14, 2) = 0 then begin
+    SetRCValue(3, 13, format('%.3g',[PosPen.y]));
+    SetRCValue(4, 13, format('%.3g',[PosPen.z - 0.25]));
+  end else begin
+    SetRCValue(3, 13, format('%.3g',[PosPen.z]));
+    SetRCValue(4, 13, format('%.3g',[-PosPen.y - 0.25]));
+  end;
+
   // Set color of the pen (RGB)
   if RCButtonPressed(1, 2) then
     SetSensorColor(0, 0, round(GetRCValue(1, 3)), round(GetRCValue(1, 4)), 
@@ -383,24 +408,30 @@ begin
     MatrixToRangeF(2, 15, AuxJoints, '%.3f');
   end;
 
+
+
+  // Inverse Dynamics
+  if RCButtonPressed(10,7) then begin
+    if InvDynON then begin
+      InvDynON := false;
+    end else begin
+      InvDynON := true;
+    end;
+  end;
+
+
+
+  // SimTwo Sheet
   SetRCValue(2, 8, format('%.3g',[Deg(GetAxisPos(0, iJ1Axis))]));
   SetRCValue(3, 8, format('%.3g',[Deg(GetAxisPos(0, iJ2Axis))]));
   SetRCValue(4, 8, format('%.3g',[GetAxisPos(0, iZAxis)]));
-
-  PosPen := GetSolidPos(0, iPen);
   SetRCValue(2, 13, format('%.3g',[PosPen.x]));
 
-  if GetRCValue(14, 2) = 0 then begin
-    SetRCValue(3, 13, format('%.3g',[PosPen.y]));
-    SetRCValue(4, 13, format('%.3g',[PosPen.z - 0.25]));
+  if InvDynON then begin
+    SetRCValue(10, 8, 'ON');
   end else begin
-    SetRCValue(3, 13, format('%.3g',[PosPen.z]));
-    SetRCValue(4, 13, format('%.3g',[-PosPen.y - 0.25]));
+    SetRCValue(10, 8, 'OFF');
   end;
-
-  t := GetSolidCanvas(0,0);
-  t.brush.color := clwhite;
-  t.textout(10,10, GetRCText(9, 2));
 end;
 
 // Initialization procedure: is called once when the script is started
@@ -410,4 +441,7 @@ begin
   iJ2Axis := GetAxisIndex(0, 'Joint2', 0);
   iZAxis  := GetAxisIndex(0, 'SlideZ', 0);
   iPen := GetSolidIndex(0, 'Pen');
+
+  Q_meas := Mzeros(3,1);
+  Qd1_meas := Mzeros(3,1);
 end;
