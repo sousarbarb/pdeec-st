@@ -22,7 +22,7 @@ const
 
 // Global Variables
 var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
-    Q_meas, Qd1_meas: Matrix;
+    Q_meas, Qd1_meas, W_mat, K0_mat, K1_mat: Matrix;
     InvDynON: boolean;
 
 
@@ -417,6 +417,14 @@ begin
       InvDynON := false;
     end else begin
       InvDynON := true;
+      // wn
+      W_mat := RangeToMatrix(28,8,3,1);
+      // K0 = wn ^ 2
+      MSetV(K0_mat,0,0,MGetV(W_mat,0,0)*MGetV(W_mat,0,0));
+      MSetV(K0_mat,1,0,MGetV(W_mat,1,0)*MGetV(W_mat,1,0));
+      MSetV(K0_mat,2,0,MGetV(W_mat,2,0)*MGetV(W_mat,2,0));
+      // K1 = 2 * wn
+      K1_mat := MMultReal(W_mat,2);
     end;
   end;
   if InvDynON then begin
@@ -436,6 +444,8 @@ begin
     MatrixToRangeF(18, 8, C_mat, '%.3f');
     MatrixToRangeF(21, 8, B_mat, '%.3f');
     MatrixToRangeF(24, 8, Phi_mat, '%.3f');
+    MatrixToRangeF(28, 9, K0_mat, '%.3f');
+    MatrixToRangeF(28,10, K1_mat, '%.3f');
   end;
 
 
@@ -463,4 +473,7 @@ begin
 
   Q_meas := Mzeros(3,1);
   Qd1_meas := Mzeros(3,1);
+  W_mat := Mzeros(3,1);
+  K0_mat := Mzeros(3,1);
+  K1_mat := Mzeros(3,1);
 end;

@@ -32,8 +32,8 @@
     <cell r="3" c="7" text="1" />
     <cell r="4" c="7" text="2" />
     <cell r="1" c="8" text="Value" />
-    <cell r="2" c="8" text="-0.00693" />
-    <cell r="3" c="8" text="-0.0299" />
+    <cell r="2" c="8" text="-0.00248" />
+    <cell r="3" c="8" text="-0.0297" />
     <cell r="4" c="8" text="0.0426" />
     <cell r="1" c="9" text="[DK]" />
     <cell r="2" c="9" text="50" />
@@ -52,8 +52,8 @@
     <cell r="3" c="14" text="0.5" />
     <cell r="4" c="14" text="0" />
     <cell r="2" c="13" text="1" />
-    <cell r="3" c="13" text="-0.000308" />
-    <cell r="4" c="13" text="-0.0427" />
+    <cell r="3" c="13" text="-0.000212" />
+    <cell r="4" c="13" text="-0.0426" />
     <cell r="1" c="15" text="Req_Joint" />
     <cell r="2" c="15" text="103.618" />
     <cell r="3" c="15" text="-115.613" />
@@ -71,7 +71,7 @@
     <cell r="6" c="8" text="0.500" />
     <cell r="6" c="9" text="0.000" />
     <cell r="10" c="7" text="[ID]" />
-    <cell r="10" c="8" text="ON" />
+    <cell r="10" c="8" text="OFF" />
     <cell r="11" c="7" text="Joint" />
     <cell r="11" c="8" text="Position" />
     <cell r="11" c="9" text="Velocity" />
@@ -82,7 +82,7 @@
     <cell r="13" c="8" text="-0.001" />
     <cell r="14" c="8" text="0.043" />
     <cell r="12" c="9" text="0.000" />
-    <cell r="13" c="9" text="0.000" />
+    <cell r="13" c="9" text="-0.001" />
     <cell r="14" c="9" text="0.002" />
     <cell r="15" c="7" text="Matrix M" />
     <cell r="18" c="7" text="Matrix C" />
@@ -119,5 +119,21 @@
     <cell r="24" c="8" text="0.000" />
     <cell r="25" c="8" text="0.000" />
     <cell r="26" c="8" text="0.981" />
+    <cell r="27" c="7" text="Ctrl K0K1" />
+    <cell r="28" c="7" text="0" />
+    <cell r="29" c="7" text="1" />
+    <cell r="30" c="7" text="2" />
+    <cell r="27" c="8" text="w" />
+    <cell r="27" c="9" text="K0" />
+    <cell r="27" c="10" text="K1" />
+    <cell r="28" c="8" text="1" />
+    <cell r="29" c="8" text="1" />
+    <cell r="30" c="8" text="1" />
+    <cell r="28" c="10" text="2.000" />
+    <cell r="29" c="10" text="2.000" />
+    <cell r="30" c="10" text="2.000" />
+    <cell r="28" c="9" text="1.000" />
+    <cell r="29" c="9" text="1.000" />
+    <cell r="30" c="9" text="1.000" />
   </cells>
 </sheet>
