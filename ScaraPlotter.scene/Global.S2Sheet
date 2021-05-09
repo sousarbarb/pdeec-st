@@ -32,9 +32,9 @@
     <cell r="3" c="7" text="1" />
     <cell r="4" c="7" text="2" />
     <cell r="1" c="8" text="Value" />
-    <cell r="2" c="8" text="0.00489" />
-    <cell r="3" c="8" text="-0.0242" />
-    <cell r="4" c="8" text="0.0425" />
+    <cell r="2" c="8" text="70.6" />
+    <cell r="3" c="8" text="-66.2" />
+    <cell r="4" c="8" text="-0.0506" />
     <cell r="1" c="9" text="[DK]" />
     <cell r="2" c="9" text="50" />
     <cell r="3" c="9" text="-20" />
@@ -48,18 +48,18 @@
     <cell r="3" c="10" text="0.660" />
     <cell r="4" c="10" text="-0.120" />
     <cell r="1" c="14" text="[IK]" />
-    <cell r="2" c="14" text="0.25" />
-    <cell r="3" c="14" text="0.5" />
+    <cell r="2" c="14" text="0.6" />
+    <cell r="3" c="14" text="0.6" />
     <cell r="4" c="14" text="0" />
-    <cell r="2" c="13" text="1" />
-    <cell r="3" c="13" text="-0.0000828" />
-    <cell r="4" c="13" text="-0.0426" />
+    <cell r="2" c="13" text="0.598" />
+    <cell r="3" c="13" text="0.617" />
+    <cell r="4" c="13" text="0.0307" />
     <cell r="1" c="15" text="Req_Joint" />
-    <cell r="2" c="15" text="103.618" />
-    <cell r="3" c="15" text="-115.613" />
+    <cell r="2" c="15" text="70.375" />
+    <cell r="3" c="15" text="-65.376" />
     <cell r="4" c="15" text="0.000" />
     <cell r="14" c="1" text="Vertcal:" />
-    <cell r="14" c="2" text="0" />
+    <cell r="14" c="2" text="1" />
     <cell r="7" c="7" text="0.500" />
     <cell r="7" c="8" text="-0.866" />
     <cell r="7" c="9" text="0.000" />
@@ -71,28 +71,28 @@
     <cell r="6" c="8" text="0.500" />
     <cell r="6" c="9" text="0.000" />
     <cell r="10" c="7" text="[ID]" />
-    <cell r="10" c="8" text="OFF" />
+    <cell r="10" c="8" text="ON" />
     <cell r="11" c="7" text="Joint" />
     <cell r="11" c="8" text="Position" />
     <cell r="11" c="9" text="Velocity" />
     <cell r="12" c="7" text="0" />
     <cell r="13" c="7" text="1" />
     <cell r="14" c="7" text="2" />
-    <cell r="12" c="8" text="-0.080" />
-    <cell r="13" c="8" text="1.480" />
-    <cell r="14" c="8" text="0.125" />
-    <cell r="12" c="9" text="-0.002" />
-    <cell r="13" c="9" text="-0.004" />
-    <cell r="14" c="9" text="0.008" />
+    <cell r="12" c="8" text="1.232" />
+    <cell r="13" c="8" text="-1.155" />
+    <cell r="14" c="8" text="-0.051" />
+    <cell r="12" c="9" text="-0.004" />
+    <cell r="13" c="9" text="-0.006" />
+    <cell r="14" c="9" text="-0.003" />
     <cell r="15" c="7" text="Matrix M" />
     <cell r="18" c="7" text="Matrix C" />
     <cell r="21" c="7" text="Matrix B" />
     <cell r="24" c="7" text="Matrix" />
     <cell r="25" c="7" text="Phi" />
-    <cell r="15" c="8" text="0.167" />
-    <cell r="15" c="9" text="0.031" />
+    <cell r="15" c="8" text="0.198" />
+    <cell r="15" c="9" text="0.046" />
     <cell r="15" c="10" text="0.000" />
-    <cell r="16" c="8" text="0.031" />
+    <cell r="16" c="8" text="0.046" />
     <cell r="16" c="9" text="0.027" />
     <cell r="16" c="10" text="0.000" />
     <cell r="17" c="8" text="0.000" />
@@ -116,9 +116,9 @@
     <cell r="23" c="8" text="0.000" />
     <cell r="23" c="9" text="0.000" />
     <cell r="23" c="10" text="2.713" />
-    <cell r="24" c="8" text="0.000" />
-    <cell r="25" c="8" text="0.000" />
-    <cell r="26" c="8" text="0.981" />
+    <cell r="24" c="8" text="1.563" />
+    <cell r="25" c="8" text="0.782" />
+    <cell r="26" c="8" text="0.000" />
     <cell r="27" c="7" text="Ctrl K0K1" />
     <cell r="28" c="7" text="0" />
     <cell r="29" c="7" text="1" />
@@ -126,14 +126,14 @@
     <cell r="27" c="8" text="w" />
     <cell r="27" c="9" text="r" />
     <cell r="27" c="10" text="aq" />
-    <cell r="28" c="8" text="1" />
-    <cell r="29" c="8" text="1" />
-    <cell r="30" c="8" text="1" />
-    <cell r="28" c="10" text="0.084" />
-    <cell r="29" c="10" text="-1.473" />
-    <cell r="30" c="10" text="-0.140" />
-    <cell r="28" c="9" text="0.000" />
-    <cell r="29" c="9" text="0.000" />
+    <cell r="28" c="8" text="7" />
+    <cell r="29" c="8" text="7" />
+    <cell r="30" c="8" text="7" />
+    <cell r="28" c="10" text="-0.145" />
+    <cell r="29" c="10" text="0.748" />
+    <cell r="30" c="10" text="2.518" />
+    <cell r="28" c="9" text="60.185" />
+    <cell r="29" c="9" text="-55.910" />
     <cell r="30" c="9" text="0.000" />
     <cell r="27" c="11" text="u" />
     <cell r="24" c="9" text="0.000" />
@@ -142,8 +142,13 @@
     <cell r="24" c="10" text="-0.001" />
     <cell r="25" c="10" text="0.003" />
     <cell r="26" c="10" text="-0.123" />
-    <cell r="28" c="11" text="-0.037" />
-    <cell r="29" c="11" text="-0.046" />
-    <cell r="30" c="11" text="0.987" />
+    <cell r="28" c="11" text="1.557" />
+    <cell r="29" c="11" text="0.780" />
+    <cell r="30" c="11" text="0.245" />
+    <cell r="11" c="10" text="XYZ" />
+    <cell r="10" c="10" text="InvDyn" />
+    <cell r="12" c="10" text="0.6" />
+    <cell r="13" c="10" text="0.6" />
+    <cell r="14" c="10" text="0" />
   </cells>
 </sheet>

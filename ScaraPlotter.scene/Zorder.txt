@@ -1,9 +1,9 @@
 FViewer
 FSheets
-FEditor
-FSceneEdit
 FParams
 FChart
+FEditor
+FSceneEdit
 
 
 FWayPointsEdit

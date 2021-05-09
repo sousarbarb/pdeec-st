@@ -23,7 +23,7 @@ const
 // Global Variables
 var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
     Q_meas, Qd1_meas, W_mat, K0_mat, K1_mat: Matrix;
-    Q_desir, Qd1_desir, Qd2_desir: Matrix;
+    Q_desir, Qd1_desir, Qd2_desir, XYZ_req: Matrix;
     InvDynON: boolean;
 
 
@@ -82,6 +82,15 @@ begin
   SetMotorControllerState(0, iJ1Axis, true);
   SetMotorControllerState(0, iJ2Axis, true);
   SetMotorControllerState(0, iZAxis , true);
+end;
+
+// - set torque value for the joints
+procedure SetTorque(Torque: matrix);
+begin
+  SetAxisTorqueRef(0, iJ1Axis, Mgetv(Torque, 0, 0));
+  SetAxisTorqueRef(0, iJ2Axis, Mgetv(Torque, 1, 0));
+  //SetAxisTorqueRef(0, iZAxis , Mgetv(Torque, 2, 0));
+  SetAxisTorqueRef(0, iZAxis , 0);
 end;
 
 
@@ -447,6 +456,11 @@ begin
       MSetV(K1_mat,0,0,2*MGetV(W_mat,0,0));
       MSetV(K1_mat,1,1,2*MGetV(W_mat,1,0));
       MSetV(K1_mat,2,2,2*MGetV(W_mat,2,0));
+      // Requested set point
+      XYZ_req := RangeToMatrix(12,10,3,1);
+      Q_desir := IK3(XYZ_req);
+      Qd1_desir := Mzeros(3,1);
+      Qd2_desir := Mzeros(3,1);
     end;
   end;
   if InvDynON then begin
@@ -474,6 +488,8 @@ begin
     U_mat := MAdd(U_mat,MMult(C_mat,Qd1_meas));
     U_mat := MAdd(U_mat,MMult(B_mat,Qd1_meas));
     U_mat := MAdd(U_mat,Phi_mat);
+
+    SetTorque(U_mat);
 
     MatrixToRangeF(12, 8, Q_meas, '%.3f');
     MatrixToRangeF(12, 9, Qd1_meas, '%.3f');
