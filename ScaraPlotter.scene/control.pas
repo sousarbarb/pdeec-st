@@ -18,12 +18,13 @@ const
   bm_1 = 0.10;  bm_2 = 0.10;  bm_3 = 0.10;  // viscous constant
   ri_1 = 0.12;  ri_2 = 0.12;  ri_3 = 0.12;  // internal resistance
   // Gravity
-  gacc = 9.80665;  // gravitational acceleration (m/s^2)
+  //gacc = 9.80665;  // gravitational acceleration (m/s^2)
+  gacc = 9.8;
 
 // Global Variables
 var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
     Q_meas, Qd1_meas, W_mat, K0_mat, K1_mat: Matrix;
-    Q_desir, Qd1_desir, Qd2_desir, XYZ_req: Matrix;
+    Q_desir, Qd1_desir, Qd2_desir, XYZ_desir: Matrix;
     InvDynON: boolean;
 
 
@@ -89,13 +90,29 @@ procedure SetTorque(Torque: matrix);
 begin
   SetAxisTorqueRef(0, iJ1Axis, Mgetv(Torque, 0, 0));
   SetAxisTorqueRef(0, iJ2Axis, Mgetv(Torque, 1, 0));
-  //SetAxisTorqueRef(0, iZAxis , Mgetv(Torque, 2, 0));
-  SetAxisTorqueRef(0, iZAxis , 0);
+  SetAxisTorqueRef(0, iZAxis , Mgetv(Torque, 2, 0));
 end;
 
 
 
 // Inverse Dynamics (ID)
+// - set inverse dynamics parameters
+procedure SetIDParameters;
+begin
+  // wn
+  W_mat := RangeToMatrix(12,10,3,1);
+  // K0 = wn ^ 2
+  K0_mat := Mzeros(3,3);
+  MSetV(K0_mat,0,0,MGetV(W_mat,0,0)*MGetV(W_mat,0,0));
+  MSetV(K0_mat,1,1,MGetV(W_mat,1,0)*MGetV(W_mat,1,0));
+  MSetV(K0_mat,2,2,MGetV(W_mat,2,0)*MGetV(W_mat,2,0));
+  // K1 = 2 * wn
+  K1_mat := Mzeros(3,3);
+  MSetV(K1_mat,0,0,2*MGetV(W_mat,0,0));
+  MSetV(K1_mat,1,1,2*MGetV(W_mat,1,0));
+  MSetV(K1_mat,2,2,2*MGetV(W_mat,2,0));
+end;
+
 // - inertia matrix (D)
 function IDDMat(_Q: Matrix): Matrix;
 var q1_, q2_, q3_: double;
@@ -335,14 +352,7 @@ begin
   t.brush.color := clwhite;
   t.textout(10,10, GetRCText(9, 2));
 
-  // Horizontal/Vertical SCARA
-  if GetRCValue(14, 2) = 0 then begin
-    SetRCValue(3, 13, format('%.3g',[PosPen.y]));
-    SetRCValue(4, 13, format('%.3g',[PosPen.z - 0.25]));
-  end else begin
-    SetRCValue(3, 13, format('%.3g',[PosPen.z]));
-    SetRCValue(4, 13, format('%.3g',[-PosPen.y - 0.25]));
-  end;
+
 
   // Set color of the pen (RGB)
   if RCButtonPressed(1, 2) then
@@ -444,24 +454,21 @@ begin
     end else begin
       InvDynON := true;
       SetTorqueMode;
-      // wn
-      W_mat := RangeToMatrix(28,8,3,1);
-      // K0 = wn ^ 2
-      K0_mat := Mzeros(3,3);
-      MSetV(K0_mat,0,0,MGetV(W_mat,0,0)*MGetV(W_mat,0,0));
-      MSetV(K0_mat,1,1,MGetV(W_mat,1,0)*MGetV(W_mat,1,0));
-      MSetV(K0_mat,2,2,MGetV(W_mat,2,0)*MGetV(W_mat,2,0));
-      // K1 = 2 * wn
-      K1_mat := Mzeros(3,3);
-      MSetV(K1_mat,0,0,2*MGetV(W_mat,0,0));
-      MSetV(K1_mat,1,1,2*MGetV(W_mat,1,0));
-      MSetV(K1_mat,2,2,2*MGetV(W_mat,2,0));
+      SetIDParameters;
       // Requested set point
-      XYZ_req := RangeToMatrix(12,10,3,1);
-      Q_desir := IK3(XYZ_req);
+      XYZ_desir := RangeToMatrix(12,9,3,1);
+      Q_desir := IK3(XYZ_desir);
       Qd1_desir := Mzeros(3,1);
       Qd2_desir := Mzeros(3,1);
     end;
+  end;
+  if InvDynON AND RCButtonPressed(10,9) then begin
+      SetIDParameters;
+      // Requested set point
+      XYZ_desir := RangeToMatrix(12,9,3,1);
+      Q_desir := IK3(XYZ_desir);
+      Qd1_desir := Mzeros(3,1);
+      Qd2_desir := Mzeros(3,1);
   end;
   if InvDynON then begin
     M_mat := IDMMat(Q_meas);
@@ -478,7 +485,7 @@ begin
     R_mat := MAdd(R_mat,MMult(K1_mat,Qd1_desir));
     R_mat := MAdd(R_mat,MMult(K0_mat,Q_desir));
 
-    // Outer loop
+    // Outter loop
     Aq_mat := R_mat;
     Aq_mat := MSub(Aq_mat,MMult(K0_mat,Q_meas));
     Aq_mat := MSub(Aq_mat,MMult(K1_mat,Qd1_meas));
@@ -491,25 +498,41 @@ begin
 
     SetTorque(U_mat);
 
-    MatrixToRangeF(12, 8, Q_meas, '%.3f');
-    MatrixToRangeF(12, 9, Qd1_meas, '%.3f');
-    MatrixToRangeF(15, 8, M_mat, '%.3f');
-    MatrixToRangeF(18, 8, C_mat, '%.3f');
-    MatrixToRangeF(21, 8, B_mat, '%.3f');
-    MatrixToRangeF(24, 8, Phi_mat, '%.3f');
-    MatrixToRangeF(28, 9, R_mat, '%.3f');
-    MatrixToRangeF(28,10, Aq_mat, '%.3f');
-    MatrixToRangeF(28,11, U_mat, '%.3f');
+    MatrixToRangeF(16, 8, Aq_mat, '%.3f');
+    MatrixToRangeF(16, 9, R_mat, '%.3f');
+    MatrixToRangeF(16,10, U_mat, '%.3f');
+    MatrixToRangeF(20, 8, Q_meas, '%.3f');
+    MatrixToRangeF(20, 9, Q_desir, '%.3f');
+    MatrixToRangeF(24, 7, M_mat, '%.3f');
+    MatrixToRangeF(28, 7, C_mat, '%.3f');
+    MatrixToRangeF(32, 7, B_mat, '%.3f');
+    MatrixToRangeF(24,10, Phi_mat, '%.3f');
   end;
 
 
 
   // SimTwo Sheet
+  // - joint value (forward kinematics)
   SetRCValue(2, 8, format('%.3g',[Deg(GetAxisPos(0, iJ1Axis))]));
   SetRCValue(3, 8, format('%.3g',[Deg(GetAxisPos(0, iJ2Axis))]));
   SetRCValue(4, 8, format('%.3g',[GetAxisPos(0, iZAxis)]));
-  SetRCValue(2, 13, format('%.3g',[PosPen.x]));
 
+  // - pen position (horizontal/vertical SCARA)
+  SetRCValue(2, 13, format('%.3g',[PosPen.x]));
+  SetRCValue(12, 8, format('%.3g',[PosPen.x]));
+  if GetRCValue(14, 2) = 0 then begin
+    SetRCValue(3, 13, format('%.3g',[PosPen.y]));
+    SetRCValue(4, 13, format('%.3g',[PosPen.z - 0.25]));
+    SetRCValue(13, 8, format('%.3g',[PosPen.y]));
+    SetRCValue(14, 8, format('%.3g',[PosPen.z - 0.25]));
+  end else begin
+    SetRCValue(3, 13, format('%.3g',[PosPen.z]));
+    SetRCValue(4, 13, format('%.3g',[-PosPen.y - 0.25]));
+    SetRCValue(13, 8, format('%.3g',[PosPen.z]));
+    SetRCValue(14, 8, format('%.3g',[-PosPen.y - 0.25]));
+  end;
+
+  // - inverse dynamics activated
   if InvDynON then begin
     SetRCValue(10, 8, 'ON');
   end else begin
