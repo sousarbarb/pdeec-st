@@ -259,7 +259,7 @@ end;
 function IDPhiMatHorizontalSCARA(_Q: Matrix): Matrix;
 begin
   result := Mzeros(3,1);
-  MSetV(result,2,0,gacc*m_3);
+  MSetV(result,2,0,-gacc*m_3);
 end;
 
 function IDPhiMatVerticalSCARA(_Q: Matrix): Matrix;
@@ -548,7 +548,8 @@ begin
     MatrixToRangeF(16, 9, Aq_mat, '%.3f');
 
     // Inner loop - torque computation
-    U_mat := MMult(M_mat,Aq_mat);
+    U_mat := MZeros(3,1);
+    U_mat := MAdd(U_mat,MMult(M_mat,Aq_mat  ));
     U_mat := MAdd(U_mat,MMult(C_mat,Qd1_meas));
     U_mat := MAdd(U_mat,MMult(B_mat,Qd1_meas));
     U_mat := MAdd(U_mat,Phi_mat);
