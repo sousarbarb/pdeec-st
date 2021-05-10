@@ -20,9 +20,9 @@
     <cell r="3" c="7" text="1" />
     <cell r="4" c="7" text="2" />
     <cell r="1" c="8" text="Value" />
-    <cell r="2" c="8" text="56.2" />
-    <cell r="3" c="8" text="-105" />
-    <cell r="4" c="8" text="0.000335" />
+    <cell r="2" c="8" text="-0.00329" />
+    <cell r="3" c="8" text="-0.0303" />
+    <cell r="4" c="8" text="0.0426" />
     <cell r="1" c="9" text="[DK]" />
     <cell r="2" c="9" text="50" />
     <cell r="3" c="9" text="-20" />
@@ -39,9 +39,9 @@
     <cell r="2" c="14" text="0.4" />
     <cell r="3" c="14" text="0.5" />
     <cell r="4" c="14" text="0" />
-    <cell r="2" c="13" text="0.6" />
-    <cell r="3" c="13" text="0.2" />
-    <cell r="4" c="13" text="-0.00252" />
+    <cell r="2" c="13" text="1" />
+    <cell r="3" c="13" text="-0.000221" />
+    <cell r="4" c="13" text="-0.0426" />
     <cell r="1" c="15" text="Req_Joint" />
     <cell r="2" c="15" text="88.790" />
     <cell r="3" c="15" text="-103.248" />
@@ -59,16 +59,16 @@
     <cell r="6" c="8" text="0.500" />
     <cell r="6" c="9" text="0.000" />
     <cell r="10" c="7" text="[ID]" />
-    <cell r="10" c="8" text="ON" />
+    <cell r="10" c="8" text="OFF" />
     <cell r="11" c="7" text="Position" />
     <cell r="11" c="8" text="Value" />
     <cell r="11" c="9" text="Ref" />
     <cell r="12" c="7" text="xc" />
     <cell r="13" c="7" text="yc" />
     <cell r="14" c="7" text="zc" />
-    <cell r="12" c="8" text="0.6" />
-    <cell r="13" c="8" text="0.2" />
-    <cell r="14" c="8" text="-0.00252" />
+    <cell r="12" c="8" text="1" />
+    <cell r="13" c="8" text="-0.000221" />
+    <cell r="14" c="8" text="-0.0426" />
     <cell r="12" c="9" text="0.6" />
     <cell r="13" c="9" text="0.2" />
     <cell r="14" c="9" text="0" />
@@ -114,9 +114,9 @@
     <cell r="25" c="10" text="0.000" />
     <cell r="26" c="10" text="-0.980" />
     <cell r="11" c="10" text="Wn" />
-    <cell r="12" c="10" text="20" />
-    <cell r="13" c="10" text="20" />
-    <cell r="14" c="10" text="20" />
+    <cell r="12" c="10" text="5" />
+    <cell r="13" c="10" text="5" />
+    <cell r="14" c="10" text="5" />
     <cell r="10" c="9" text="[SET]" />
     <cell r="16" c="7" text="1" />
     <cell r="17" c="7" text="2" />
