@@ -333,7 +333,7 @@ procedure Control;
 var
   t: tcanvas;
   HTrans, XYZ, ORIENTATION, AuxJoints, ReqJoints, ReqValuesDK: matrix;
-  U1, U2: double;
+  U1, U2, U3, T1, T2, T3: double;
   PosPen: TPoint3D;
   M_mat, C_mat, B_mat, Phi_mat: Matrix;
   Aq_mat, R_mat, U_mat: Matrix;
@@ -354,7 +354,7 @@ begin
   // - canvas
   t := GetSolidCanvas(0,0);
   t.brush.color := clwhite;
-  t.textout(10,10, GetRCText(9, 2));
+  t.textout(10,10, GetRCText(8, 2));
 
 
 
@@ -365,47 +365,92 @@ begin
 
   // Set position of the pen
   // - up
-  if RCButtonPressed(3, 2) then
+  if RCButtonPressed(3, 2) then begin
+    SetJointsControllerState(true);
     SetAxisPosRef(0, iZAxis, GetRCValue(3, 3));
-  // - down
-  if RCButtonPressed(4, 2) then
-    SetAxisPosRef(0, iZAxis, GetRCValue(4, 3));
-
-  // Set angle of joints J1,J2
-  if RCButtonPressed(6, 2) then begin
-    SetAxisPosRef(0, iJ1Axis, Deg(GetRCValue(6, 3)));
-    SetAxisPosRef(0, iJ2Axis, Deg(GetRCValue(6, 4)));
   end;
-  if RCButtonPressed(7, 2) then begin
-    SetAxisPosRef(0, iJ1Axis, 0);
-    SetAxisPosRef(0, iJ2Axis, 0);
+  // - down
+  if RCButtonPressed(4, 2) then begin
+    SetJointsControllerState(true);
+    SetAxisPosRef(0, iZAxis, GetRCValue(4, 3));
+  end;
+
+  // Reset angle of joints J1,J2
+  if RCButtonPressed(6, 2) then begin
+    SetJointsControllerState(true);
+    SetValuesJoints(MZeros(3,1));
   end;
 
   // Set voltage of motor
   // (default controller should be disabled:
   //    Scene > Tag articulations > Tag controller > active='0' > Rebuild Scene)
   // - joint 1
-  if RCButtonPressed(11, 2) then begin
-    U1 := GetRCValue(11, 3);
+  if RCButtonPressed(12, 2) then begin
+    U1 := GetRCValue(12, 3);
+    SetJointsControllerState(false);
     SetAxisVoltageRef(0, iJ1Axis, U1);
   end;
   // - joint 2
-  if RCButtonPressed(12, 2) then begin
-    U2 := GetRCValue(12, 3);
-     SetAxisVoltageRef(0, iJ2Axis, U2);
+  if RCButtonPressed(13, 2) then begin
+    U2 := GetRCValue(13, 3);
+    SetJointsControllerState(false);
+    SetAxisVoltageRef(0, iJ2Axis, U2);
+  end;
+  // - joint 3
+  if RCButtonPressed(14, 2) then begin
+    U3 := GetRCValue(14, 3);
+    SetJointsControllerState(false);
+    SetAxisVoltageRef(0, iZAxis , U3);
   end;
   // - reset voltages
-  if RCButtonPressed(11, 4) then begin
+  if RCButtonPressed(12, 4) then begin
     U1 := 0;
     U2 := 0;
+    U3 := 0;
+    SetJointsControllerState(false);
     SetAxisVoltageRef(0, iJ1Axis, U1);
-    SetAxisVoltageRef(0, iJ1Axis, U2);
+    SetAxisVoltageRef(0, iJ2Axis, U2);
+    SetAxisVoltageRef(0, iZAxis , U3);
+  end;
+
+  // Set torque of motor
+  // (default controller should be disabled:
+  //    Scene > Tag articulations > Tag controller > active='0' > Rebuild Scene)
+  // - joint 1
+  if RCButtonPressed(16, 2) then begin
+    T1 := GetRCValue(16, 3);
+    SetJointsControllerState(false);
+    SetAxisTorqueRef(0, iJ1Axis, T1);
+  end;
+  // - joint 2
+  if RCButtonPressed(17, 2) then begin
+    T2 := GetRCValue(17, 3);
+    SetJointsControllerState(false);
+    SetAxisTorqueRef(0, iJ2Axis, T2);
+  end;
+  // - joint 3
+  if RCButtonPressed(18, 2) then begin
+    T3 := GetRCValue(18, 3);
+    SetJointsControllerState(false);
+    SetAxisTorqueRef(0, iZAxis , T3);
+  end;
+  // - reset voltages
+  if RCButtonPressed(16, 4) then begin
+    T1 := 0;
+    T2 := 0;
+    T3 := 0;
+    SetJointsControllerState(false);
+    SetAxisTorqueRef(0, iJ1Axis, T1);
+    SetAxisTorqueRef(0, iJ2Axis, T2);
+    SetAxisTorqueRef(0, iZAxis , T3);
   end;
 
 
 
   // Forward Kinematics
   if RCButtonPressed(1, 9) then begin
+    SetJointsControllerState(true);
+    
     ReqValuesDK := Mzeros(3, 1);
     Msetv(ReqValuesDK, 0, 0, rad(GetRCValue(2, 9)));
     Msetv(ReqValuesDK, 1, 0, rad(GetRCValue(3, 9)));
@@ -431,6 +476,8 @@ begin
 
   // Inverse Kinematics
   if RCButtonPressed(1,14) then begin
+    SetJointsControllerState(true);
+
     XYZ := Mzeros(3,1);
 
     Msetv(XYZ, 0, 0, GetRCValue(2, 14));
@@ -478,7 +525,7 @@ begin
     M_mat := IDMMat(Q_meas);
     C_mat := IDCMat(Q_meas,Qd1_meas);
     B_mat := IDBMat;
-    if GetRCValue(14, 2) = 0 then begin
+    if GetRCValue(10, 2) = 0 then begin
       Phi_mat := IDPhiMatHorizontalSCARA(Q_meas);
     end else begin
       Phi_mat := IDPhiMatVerticalSCARA(Q_meas);
@@ -527,7 +574,7 @@ begin
   // - pen position (horizontal/vertical SCARA)
   SetRCValue(2, 13, format('%.3g',[PosPen.x]));
   SetRCValue(12, 8, format('%.3g',[PosPen.x]));
-  if GetRCValue(14, 2) = 0 then begin
+  if GetRCValue(10, 2) = 0 then begin
     SetRCValue(3, 13, format('%.3g',[PosPen.y]));
     SetRCValue(4, 13, format('%.3g',[PosPen.z - 0.25]));
     SetRCValue(13, 8, format('%.3g',[PosPen.y]));
