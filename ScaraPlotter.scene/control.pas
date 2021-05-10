@@ -33,6 +33,15 @@ var iZAxis, iJ1Axis, iJ2Axis, iPen: integer;
 // - set reference of  the joints (J1,J2: revolute; J3: prismatic)
 procedure SetValuesJoints(Values: matrix);
 begin
+  // Controller mode: position control
+  SetMotorControllerMode(0, iJ1Axis, 'pidposition');
+  SetMotorControllerMode(0, iJ2Axis, 'pidposition');
+  SetMotorControllerMode(0, iZAxis , 'pidposition');
+  // Controller parameters:          ki  kp  kp  kf
+  SetMotorControllerPars(0, iJ1Axis,  0, 25,  3,  0);
+  SetMotorControllerPars(0, iJ2Axis,  0, 50,  4,  0);
+  SetMotorControllerPars(0, iZAxis ,  0,  1,  5,  0);
+  // Set position reference
   SetAxisPosRef(0, iJ1Axis, Mgetv(Values, 0, 0));
   SetAxisPosRef(0, iJ2Axis, Mgetv(Values, 1, 0));
   SetAxisPosRef(0, iZAxis , Mgetv(Values, 2, 0));
@@ -72,17 +81,11 @@ begin
 end;
 
 // - torque mode (controllers deactivated)
-procedure SetTorqueMode;
+procedure SetJointsControllerState(activate: boolean);
 begin
-  SetMotorControllerState(0, iJ1Axis, false);
-  SetMotorControllerState(0, iJ2Axis, false);
-  SetMotorControllerState(0, iZAxis , false);
-end;
-procedure ResetTorqueMode;
-begin
-  SetMotorControllerState(0, iJ1Axis, true);
-  SetMotorControllerState(0, iJ2Axis, true);
-  SetMotorControllerState(0, iZAxis , true);
+  SetMotorControllerState(0, iJ1Axis, activate);
+  SetMotorControllerState(0, iJ2Axis, activate);
+  SetMotorControllerState(0, iZAxis , activate);
 end;
 
 // - set torque value for the joints
@@ -334,6 +337,7 @@ var
   PosPen: TPoint3D;
   M_mat, C_mat, B_mat, Phi_mat: Matrix;
   Aq_mat, R_mat, U_mat: Matrix;
+  Err_mat: Matrix;
 
 begin
   // Initialization
@@ -450,10 +454,10 @@ begin
   if RCButtonPressed(10,7) then begin
     if InvDynON then begin
       InvDynON := false;
-      ResetTorqueMode;
+      SetJointsControllerState(true);
     end else begin
       InvDynON := true;
-      SetTorqueMode;
+      SetJointsControllerState(false);
       SetIDParameters;
       // Requested set point
       XYZ_desir := RangeToMatrix(12,9,3,1);
@@ -479,34 +483,37 @@ begin
     end else begin
       Phi_mat := IDPhiMatVerticalSCARA(Q_meas);
     end;
-
-    // Reference signal
-    R_mat := Qd2_desir;
-    R_mat := MAdd(R_mat,MMult(K1_mat,Qd1_desir));
-    R_mat := MAdd(R_mat,MMult(K0_mat,Q_desir));
-
-    // Outter loop
-    Aq_mat := R_mat;
-    Aq_mat := MSub(Aq_mat,MMult(K0_mat,Q_meas));
-    Aq_mat := MSub(Aq_mat,MMult(K1_mat,Qd1_meas));
-
-    // Inner loop
-    U_mat := MMult(M_mat,Aq_mat);
-    U_mat := MAdd(U_mat,MMult(C_mat,Qd1_meas));
-    U_mat := MAdd(U_mat,MMult(B_mat,Qd1_meas));
-    U_mat := MAdd(U_mat,Phi_mat);
-
-    SetTorque(U_mat);
-
-    MatrixToRangeF(16, 8, Aq_mat, '%.3f');
-    MatrixToRangeF(16, 9, R_mat, '%.3f');
-    MatrixToRangeF(16,10, U_mat, '%.3f');
-    MatrixToRangeF(20, 8, Q_meas, '%.3f');
-    MatrixToRangeF(20, 9, Q_desir, '%.3f');
     MatrixToRangeF(24, 7, M_mat, '%.3f');
     MatrixToRangeF(28, 7, C_mat, '%.3f');
     MatrixToRangeF(32, 7, B_mat, '%.3f');
     MatrixToRangeF(24,10, Phi_mat, '%.3f');
+
+    // Outter loop
+    // - reference
+    R_mat := Qd2_desir;
+    R_mat := MAdd(R_mat,MMult(K1_mat,Qd1_desir));
+    R_mat := MAdd(R_mat,MMult(K0_mat,Q_desir));
+    // - output
+    Aq_mat := R_mat;
+    Aq_mat := MSub(Aq_mat,MMult(K0_mat,Q_meas));
+    Aq_mat := MSub(Aq_mat,MMult(K1_mat,Qd1_meas));
+    MatrixToRangeF(16, 8, R_mat, '%.3f');
+    MatrixToRangeF(16, 9, Aq_mat, '%.3f');
+
+    // Inner loop - torque computation
+    U_mat := MMult(M_mat,Aq_mat);
+    U_mat := MAdd(U_mat,MMult(C_mat,Qd1_meas));
+    U_mat := MAdd(U_mat,MMult(B_mat,Qd1_meas));
+    U_mat := MAdd(U_mat,Phi_mat);
+    MatrixToRangeF(16,10, U_mat, '%.3f');
+
+    SetTorque(U_mat);
+
+    // Error computation
+    Err_mat := MSub(Q_meas,Q_desir);
+    SetRCValue(20, 8, format('%.3g',[Deg(MGetV(Err_mat,0,0))]));
+    SetRCValue(21, 8, format('%.3g',[Deg(MGetV(Err_mat,1,0))]));
+    SetRCValue(22, 8, format('%.3g',[MGetV(Err_mat,2,0)]));
   end;
 
 
