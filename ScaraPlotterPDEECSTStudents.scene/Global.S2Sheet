@@ -20,9 +20,9 @@
     <cell r="3" c="7" text="1" />
     <cell r="4" c="7" text="2" />
     <cell r="1" c="8" text="Value" />
-    <cell r="2" c="8" text="0.00527" />
-    <cell r="3" c="8" text="-0.0282" />
-    <cell r="4" c="8" text="0.0427" />
+    <cell r="2" c="8" text="67.6" />
+    <cell r="3" c="8" text="-92.1" />
+    <cell r="4" c="8" text="0.0023" />
     <cell r="1" c="9" text="[DK]" />
     <cell r="2" c="9" text="50" />
     <cell r="3" c="9" text="-20" />
@@ -39,9 +39,9 @@
     <cell r="2" c="14" text="0.6" />
     <cell r="3" c="14" text="0.2" />
     <cell r="4" c="14" text="0" />
-    <cell r="2" c="13" text="1" />
-    <cell r="3" c="13" text="-0.000115" />
-    <cell r="4" c="13" text="-0.0427" />
+    <cell r="2" c="13" text="0.592" />
+    <cell r="3" c="13" text="0.388" />
+    <cell r="4" c="13" text="-0.00439" />
     <cell r="1" c="15" text="Req_Joint" />
     <cell r="2" c="15" text="56.196" />
     <cell r="3" c="15" text="-104.478" />
@@ -59,49 +59,49 @@
     <cell r="6" c="8" text="0.500" />
     <cell r="6" c="9" text="0.000" />
     <cell r="10" c="7" text="[ID]" />
-    <cell r="10" c="8" text="OFF" />
+    <cell r="10" c="8" text="ON" />
     <cell r="11" c="7" text="Position" />
     <cell r="11" c="8" text="Value" />
     <cell r="11" c="9" text="Ref" />
     <cell r="12" c="7" text="xc" />
     <cell r="13" c="7" text="yc" />
     <cell r="14" c="7" text="zc" />
-    <cell r="12" c="8" text="1" />
-    <cell r="13" c="8" text="-0.000115" />
-    <cell r="14" c="8" text="-0.0427" />
+    <cell r="12" c="8" text="0.592" />
+    <cell r="13" c="8" text="0.388" />
+    <cell r="14" c="8" text="-0.00439" />
     <cell r="12" c="9" text="0.6" />
     <cell r="13" c="9" text="0.4" />
     <cell r="14" c="9" text="0" />
     <cell r="15" c="7" text="Joint" />
     <cell r="18" c="7" text="3" />
     <cell r="21" c="7" text="2" />
-    <cell r="24" c="7" text="0.148" />
-    <cell r="25" c="7" text="0.021" />
+    <cell r="24" c="7" text="0.155" />
+    <cell r="25" c="7" text="0.025" />
     <cell r="15" c="8" text="R" />
     <cell r="15" c="9" text="Aq" />
     <cell r="15" c="10" text="U" />
     <cell r="16" c="8" text="29.400" />
-    <cell r="16" c="9" text="-0.145" />
-    <cell r="16" c="10" text="-0.034" />
+    <cell r="16" c="9" text="-0.748" />
+    <cell r="16" c="10" text="0.108" />
     <cell r="17" c="8" text="-39.270" />
-    <cell r="17" c="9" text="3.714" />
-    <cell r="17" c="10" text="-0.146" />
+    <cell r="17" c="9" text="1.761" />
+    <cell r="17" c="10" text="-0.196" />
     <cell r="18" c="8" text="0.000" />
-    <cell r="18" c="9" text="-0.121" />
-    <cell r="18" c="10" text="-0.989" />
+    <cell r="18" c="9" text="0.097" />
+    <cell r="18" c="10" text="-1.012" />
     <cell r="19" c="8" text="Error" />
-    <cell r="20" c="8" text="1.11" />
-    <cell r="21" c="8" text="-6.47" />
-    <cell r="22" c="8" text="0.00438" />
+    <cell r="20" c="8" text="0.193" />
+    <cell r="21" c="8" text="-2.14" />
+    <cell r="22" c="8" text="0.0023" />
     <cell r="23" c="10" text="Phi" />
-    <cell r="24" c="8" text="0.021" />
+    <cell r="24" c="8" text="0.025" />
     <cell r="25" c="8" text="0.027" />
     <cell r="26" c="8" text="0.000" />
     <cell r="27" c="7" text="C" />
     <cell r="28" c="7" text="-0.004" />
-    <cell r="29" c="7" text="0.002" />
+    <cell r="29" c="7" text="-0.003" />
     <cell r="30" c="7" text="0.000" />
-    <cell r="28" c="8" text="-0.006" />
+    <cell r="28" c="8" text="-0.001" />
     <cell r="29" c="8" text="0.000" />
     <cell r="30" c="8" text="0.000" />
     <cell r="28" c="9" text="0.000" />
